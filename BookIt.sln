@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookIt.Api", "BookIt.Api\BookIt.Api.csproj", "{A6F6EF6F-0936-497C-97B2-62E3762667E5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookIt.Business", "BookIt.Business\BookIt.Business.csproj", "{57C3C0A2-E884-4F09-ABAB-88D64253BB4B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,6 +15,10 @@ Global
 		{A6F6EF6F-0936-497C-97B2-62E3762667E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A6F6EF6F-0936-497C-97B2-62E3762667E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A6F6EF6F-0936-497C-97B2-62E3762667E5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{57C3C0A2-E884-4F09-ABAB-88D64253BB4B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57C3C0A2-E884-4F09-ABAB-88D64253BB4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57C3C0A2-E884-4F09-ABAB-88D64253BB4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57C3C0A2-E884-4F09-ABAB-88D64253BB4B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

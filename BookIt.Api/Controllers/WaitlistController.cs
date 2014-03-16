@@ -4,6 +4,7 @@ using System.Web.Http;
 
 using BookIt.Api.ViewModels;
 using BookIt.Business.Abstract;
+using BookIt.Business.Models;
 
 namespace BookIt.Api.Controllers
 {
@@ -24,10 +25,10 @@ namespace BookIt.Api.Controllers
             return waitingListRepository.GetQueuedUsers().Select(x => waitinglistHelper.CreateViewModel(x));
         }
 
-        public WaitingListEntryViewModel PostAddToList(int userId, int resourceId)
+        [HttpPost]
+        public WaitingListEntryViewModel AddToList(User user, int resourceId)
         {
-            var entry = waitingListRepository.AppendUserToList(userId, resourceId);
-
+            var entry = waitingListRepository.AppendUserToList(user, resourceId);
             if (entry == null)
             {
                 return null;

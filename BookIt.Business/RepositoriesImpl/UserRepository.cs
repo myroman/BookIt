@@ -50,5 +50,10 @@ namespace BookIt.Business.RepositoriesImpl
         {
             throw new System.NotImplementedException();
         }
+
+        public User FindUserByCredentials(User user)
+        {
+            return users.SingleOrDefault(x => x.Email == user.Email && x.Password == user.Password);
+        }
     }
 }

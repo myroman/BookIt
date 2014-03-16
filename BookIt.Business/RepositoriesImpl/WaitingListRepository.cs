@@ -26,8 +26,14 @@ namespace BookIt.Business.RepositoriesImpl
             return waitingList.OrderBy(x => x.TimeOfApply);
         }
 
-        public WaitingListEntry AppendUserToList(int userId, int resourceId)
+        public WaitingListEntry AppendUserToList(User user, int resourceId)
         {
+            var foundUser = userRepository.FindUserByCredentials(user);
+            if (foundUser == null)
+            {
+                return null;
+            }
+            var userId = foundUser.Id;
             if (IfAlreadyRegistered(userId, resourceId))
             {
                 return null;

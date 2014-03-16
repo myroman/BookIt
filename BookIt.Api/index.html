@@ -38,28 +38,32 @@
           });
       }
 
-      refreshList();
+      //refreshList();
       
       function formatItem(item) {
         return item.User.FullName + ' booked ' + item.HubResource.Name + ' at ' + item.BookedTime;
       }
 
       var addToLine = function () {
-        var query = '?userId=' + $('#userId').val() + '&resourceId=' + $('#resourceId').val();
-        $.post(uri + query, 
-          function (data) {
+        $.ajax({
+          url: uri + '?resourceId=' + $('#resourceId').val(),
+          dataType: 'json',
+          method: 'POST',
+          data: {
+            Email: 'user1@gmail.com',
+            Password: 'qwerty'
+          },
+          success: function(data) {
             if (data != null) {
               $('#message').text(formatItem(data));
               refreshList();
             }
-          },
-          'json');
+          }
+        });
       };
 
       $('#addUserToLine').click(addToLine);
     });
-
-    
   </script>
 </body>
 </html>

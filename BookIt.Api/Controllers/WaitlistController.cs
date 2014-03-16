@@ -24,10 +24,14 @@ namespace BookIt.Api.Controllers
             return waitingListRepository.GetQueuedUsers().Select(x => waitinglistHelper.CreateViewModel(x));
         }
 
-        public WaitingListEntryViewModel PostAddToList(int userId, int listId)
+        public WaitingListEntryViewModel PostAddToList(int userId, int resourceId)
         {
-            var entry = waitingListRepository.AppendUserToList(userId, listId);
+            var entry = waitingListRepository.AppendUserToList(userId, resourceId);
 
+            if (entry == null)
+            {
+                return null;
+            }
             var infoAboutNewPosition = waitinglistHelper.CreateViewModel(entry);
             return infoAboutNewPosition;
         }

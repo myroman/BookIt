@@ -28,7 +28,7 @@ namespace BookIt.Api.Controllers
                     HubResource = hubResourceRepository.Read(model.ResourceId),
                     User = userRepository.Read(model.UserId),
                     PositionInList = waitingListRepository.GetQueuedUsers().ToList().IndexOf(model) + 1,
-                    BookedTime = model.StartOfUsingResource.ToString()
+                    BookedTime = model.TimeOfApply.ToString()
                 };
         }
     }

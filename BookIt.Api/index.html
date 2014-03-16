@@ -16,10 +16,10 @@
 
   <div>
     <h2>Add user to waiting list</h2>
-    <input type="text" id="userName"/>
+    <input type="text" id="userId"/>
     <input type="text" id="resourceId"/>
 
-    <input type="button" value="Add"/>
+    <input type="button" id="addUserToLine" value="Add" />
     
     <p id="message"></p>
   </div>
@@ -29,30 +29,42 @@
     var uri = 'api/waitlist';
 
     $(document).ready(function () {
-      $.getJSON(uri)
+      function refreshList() {
+        $('#waitlist').html('');
+        $.getJSON(uri)
           .done(function (data) {
             $.each(data, function (key, item) {
-              $('<li>', {
-                 text: formatItem(item)
-              }).appendTo($('#waitlist'));
+              if (item != null) {
+                $('<li>', {
+                  text: formatItem(item)
+                }).appendTo($('#waitlist'));
+              }
             });
           });
+      }
+
+      refreshList();
+      
+      function formatItem(item) {
+        return item.User.FullName + ' booked ' + item.HubResource.Name + ' at ' + item.BookedTime;
+      }
+
+      var addToLine = function () {
+        var query = '?userId=' + $('#userId').val() + '&resourceId=' + $('#resourceId').val();
+        $.post(uri + query, 
+          function (data) {
+            if (data != null) {
+              $('#message').text(formatItem(data));
+              refreshList();
+            }
+          },
+          'json');
+      };
+
+      $('#addUserToLine').click(addToLine);
     });
 
-    function formatItem(item) {
-      return item.User.FullName + ' booked ' + item.HubResource.Name + ' at ' + item.BookedTime;
-    }
-
-    function find() {
-      var id = $('#prodId').val();
-      $.getJSON(uri + '/' + id)
-          .done(function (data) {
-            $('#product').text(formatItem(data));
-          })
-          .fail(function (jqXHR, textStatus, err) {
-            $('#product').text('Error: ' + err);
-          });
-    }
+    
   </script>
 </body>
 </html>

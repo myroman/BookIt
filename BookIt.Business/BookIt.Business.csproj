@@ -43,16 +43,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Abstract\IHubResourceRepository.cs" />
-    <Compile Include="Impl\ComponentRegistrationModule.cs" />
-    <Compile Include="Impl\HubResourceRepository.cs" />
-    <Compile Include="Impl\UserRepository.cs" />
+    <Compile Include="Models\DomainObject.cs" />
+    <Compile Include="RepositoriesImpl\RepositoriesRegistrationModule.cs" />
+    <Compile Include="RepositoriesImpl\HubResourceRepository.cs" />
+    <Compile Include="RepositoriesImpl\UserRepository.cs" />
     <Compile Include="Models\HubResource.cs" />
     <Compile Include="Models\User.cs" />
-    <Compile Include="Models\WaitingList.cs" />
+    <Compile Include="Models\WaitingListEntry.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Abstract\IRepository.cs" />
     <Compile Include="Abstract\IUserRepository.cs" />
-    <Compile Include="Abstract\IWaitingListService.cs" />
+    <Compile Include="Abstract\IWaitingListRepository.cs" />
+    <Compile Include="RepositoriesImpl\WaitingListRepository.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

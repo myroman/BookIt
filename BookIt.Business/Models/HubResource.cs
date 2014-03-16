@@ -1,9 +1,7 @@
 ﻿namespace BookIt.Business.Models
 {
-    public class HubResource
+    public class HubResource : DomainObject
     {
-        public int Id { get; set; }
-
         public string Name { get; set; }
 
         public string Description { get; set; }

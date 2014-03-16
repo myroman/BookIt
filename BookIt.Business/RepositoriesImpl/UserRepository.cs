@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 using BookIt.Business.Abstract;
 using BookIt.Business.Models;
 
-namespace BookIt.Business.Impl
+namespace BookIt.Business.RepositoriesImpl
 {
     public class UserRepository : IUserRepository
     {
@@ -12,7 +13,7 @@ namespace BookIt.Business.Impl
                 new User
                     {
                         Email = "user1@gmail.com",
-                        FullName = "John Smith",
+                        FullName = "John",
                         Id = 1,
                         Password = "qwerty"
                     },
@@ -28,6 +29,11 @@ namespace BookIt.Business.Impl
         public IEnumerable<User> GetList()
         {
             return users;
+        }
+
+        public User Read(int id)
+        {
+            return users.SingleOrDefault(x => x.Id == id);
         }
 
         public void Add(User entity)

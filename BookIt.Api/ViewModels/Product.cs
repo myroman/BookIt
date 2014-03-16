@@ -1,4 +1,4 @@
-﻿namespace BookIt.Api.Models
+﻿namespace BookIt.Api.ViewModels
 {
     public class Product
     {

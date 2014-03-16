@@ -6,34 +6,41 @@
 <body>
 
   <div>
-    <h2>All Products</h2>
-    <ul id="products" />
+    <h2>Waiting list</h2>
+    <ul id="waitlist" />
   </div>
   <div>
-    <h2>Search by ID</h2>
-    <input type="text" id="prodId" size="5" />
-    <input type="button" value="Search" onclick="find();" />
-    <p id="product" />
+    <h2></h2>
+  </div>
+
+
+  <div>
+    <h2>Add user to waiting list</h2>
+    <input type="text" id="userName"/>
+    <input type="text" id="resourceId"/>
+
+    <input type="button" value="Add"/>
+    
+    <p id="message"></p>
   </div>
 
   <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min.js"></script>
   <script>
-    var uri = 'products';
+    var uri = 'api/waitlist';
 
     $(document).ready(function () {
-      // Send an AJAX request
       $.getJSON(uri)
           .done(function (data) {
-            // On success, 'data' contains a list of products.
             $.each(data, function (key, item) {
-              // Add a list item for the product.
-              $('<li>', { text: formatItem(item) }).appendTo($('#products'));
+              $('<li>', {
+                 text: formatItem(item)
+              }).appendTo($('#waitlist'));
             });
           });
     });
 
     function formatItem(item) {
-      return item.Name + ': $' + item.Price;
+      return item.User.FullName + ' booked ' + item.HubResource.Name + ' at ' + item.BookedTime;
     }
 
     function find() {

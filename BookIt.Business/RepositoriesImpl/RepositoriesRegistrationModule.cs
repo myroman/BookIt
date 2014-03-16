@@ -2,12 +2,16 @@
 
 using BookIt.Business.Abstract;
 
-namespace BookIt.Business.Impl
+namespace BookIt.Business.RepositoriesImpl
 {
-    public class ComponentRegistrationModule : Module
+    public class RepositoriesRegistrationModule : Module
     {
         protected override void Load(ContainerBuilder builder)
         {
+            builder.RegisterType<WaitingListRepository>()
+                .As<IWaitingListRepository>()
+                .SingleInstance();
+
             builder.RegisterType<UserRepository>()
                 .As<IUserRepository>()
                 .SingleInstance();

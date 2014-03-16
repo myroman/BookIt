@@ -6,6 +6,8 @@ namespace BookIt.Business.Abstract
     {
         IEnumerable<T> GetList();
 
+        T Read(int id);
+
         void Add(T entity);
 
         void Update(T entity);

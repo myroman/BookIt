@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 using BookIt.Business.Abstract;
 using BookIt.Business.Models;
 
-namespace BookIt.Business.Impl
+namespace BookIt.Business.RepositoriesImpl
 {
     public class HubResourceRepository : IHubResourceRepository
     {
@@ -26,6 +27,11 @@ namespace BookIt.Business.Impl
         public IEnumerable<HubResource> GetList()
         {
             return resources;
+        }
+
+        public HubResource Read(int id)
+        {
+            return resources.SingleOrDefault(x => x.Id == id);
         }
 
         public void Add(HubResource entity)

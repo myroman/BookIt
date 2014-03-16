@@ -14,25 +14,12 @@ namespace BookIt.Api
     {
         protected void Application_Start()
         {
-            GlobalConfiguration.Configure(Register);
-
-            ////var builder = new ContainerBuilder();
-            ////builder.RegisterModule<RepositoriesRegistrationModule>();
-            ////builder.RegisterApiControllers(Assembly.GetExecutingAssembly());
-            ////var container = builder.Build();
-
-            ////var resolver = new AutofacWebApiDependencyResolver(container);
-            ////GlobalConfiguration.Configuration.DependencyResolver = resolver;
+            GlobalConfiguration.Configure(WebApiConfig.RegisterRoutes);
+            GlobalConfiguration.Configure(RegisterAutofacStuff);
         }
 
-        public static void Register(HttpConfiguration config)
+        public static void RegisterAutofacStuff(HttpConfiguration config)
         {
-            config.Routes.MapHttpRoute(
-                name: "DefaultApi",
-                routeTemplate: "api/{controller}/{id}",
-                defaults: new { id = RouteParameter.Optional }
-                );
-
             var builder = new ContainerBuilder();
             builder.RegisterModule<RepositoriesRegistrationModule>();
             builder.RegisterModule<ApiRegistrationModule>();

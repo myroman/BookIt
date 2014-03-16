@@ -4,16 +4,13 @@ namespace BookIt.Api.App_Start
 {
     public class WebApiConfig
     {
-        public static void Register(HttpConfiguration config)
+        public static void RegisterRoutes(HttpConfiguration config)
         {
-            // Web API configuration and services
-
-            // Web API routes
             config.MapHttpAttributeRoutes();
 
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",
-                routeTemplate: "{controller}/{id}",
+                routeTemplate: "api/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional });
         }
     }

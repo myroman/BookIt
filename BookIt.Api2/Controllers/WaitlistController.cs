@@ -1,13 +1,14 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
 
-using BookIt.Api.ViewModels;
+using BookIt.Api2.ViewModels;
 using BookIt.Business.Abstract;
 using BookIt.Business.Models;
 
-namespace BookIt.Api.Controllers
+namespace BookIt.Api2.Controllers
 {
+    [Authorize]
     public class WaitlistController : ApiController
     {
         private readonly IWaitingListRepository waitingListRepository;

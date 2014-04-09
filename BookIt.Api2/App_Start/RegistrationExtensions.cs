@@ -1,7 +1,7 @@
 using Autofac.Builder;
 using Autofac.Integration.WebApi;
 
-namespace BookIt.Api.App_Start
+namespace BookIt.Api2
 {
     public static class RegistrationExtensions
     {

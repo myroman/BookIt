@@ -1,10 +1,10 @@
-﻿using System.Linq;
+using System.Linq;
 
-using BookIt.Api.ViewModels;
+using BookIt.Api2.ViewModels;
 using BookIt.Business.Abstract;
 using BookIt.Business.Models;
 
-namespace BookIt.Api.Controllers
+namespace BookIt.Api2.Controllers
 {
     public class WaitinglistHelper
     {

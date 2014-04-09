@@ -1,6 +1,6 @@
-﻿using BookIt.Business.Models;
+using BookIt.Business.Models;
 
-namespace BookIt.Api.ViewModels
+namespace BookIt.Api2.ViewModels
 {
     public class WaitingListEntryViewModel
     {

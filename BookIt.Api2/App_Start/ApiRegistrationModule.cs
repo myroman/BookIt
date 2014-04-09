@@ -1,9 +1,8 @@
 ﻿using Autofac;
-using Autofac.Integration.WebApi;
 
-using BookIt.Api.Controllers;
+using BookIt.Api2.Controllers;
 
-namespace BookIt.Api.App_Start
+namespace BookIt.Api2
 {
     public class ApiRegistrationModule : Module
     {

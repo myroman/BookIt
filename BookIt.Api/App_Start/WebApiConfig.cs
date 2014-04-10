@@ -8,6 +8,8 @@ using System.Web.Http;
 using Autofac;
 using Autofac.Integration.WebApi;
 
+using BookIt.Business.RepositoriesImpl;
+
 using Microsoft.Owin.Security.OAuth;
 using Newtonsoft.Json.Serialization;
 
@@ -33,6 +35,8 @@ namespace BookIt.Api
 
             var builder = new ContainerBuilder();
             builder.RegisterType<Class1>();
+            builder.RegisterModule<RepositoriesRegistrationModule>();
+            builder.RegisterModule<ApiRegistrationModule>();
             //builder.RegisterApiControllers();
             builder.RegisterAssemblyTypes(
                 Assembly.GetExecutingAssembly())

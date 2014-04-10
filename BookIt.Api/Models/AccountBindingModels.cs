@@ -13,6 +13,15 @@ namespace BookIt.Api.Models
         public string ExternalAccessToken { get; set; }
     }
 
+    public class LoginViewModel
+    {
+        public string UserName { get; set; }
+
+        public string Password { get; set; }
+
+        public bool RememberMe { get; set; }
+    }
+
     public class ChangePasswordBindingModel
     {
         [Required]

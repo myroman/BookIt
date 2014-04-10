@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
+﻿using System.Collections.Generic;
 using System.Web.Http;
+
+using BookIt.Business.Abstract;
 
 namespace BookIt.Api.Controllers
 {
     //[Authorize]
     public class ValuesController : ApiController
     {
-        public ValuesController(Class1 c)
+        public ValuesController(IWaitingListRepository w)
         {
         }
 

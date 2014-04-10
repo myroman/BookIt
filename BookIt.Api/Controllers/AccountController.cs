@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
-using System.Web.Http.ModelBinding;
+
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Owin.Security;
@@ -60,6 +59,11 @@ namespace BookIt.Api.Controllers
         public IHttpActionResult Logout()
         {
             Authentication.SignOut(CookieAuthenticationDefaults.AuthenticationType);
+            if (HttpContext.Current.Response.Cookies["bearerToken"] != null)
+            {
+                HttpContext.Current.Response.Cookies["bearerToken"].Expires = DateTime.Now.AddDays(-1);
+            }
+
             return Ok();
         }
 
@@ -253,11 +257,11 @@ namespace BookIt.Api.Controllers
             if (hasRegistered)
             {
                 Authentication.SignOut(DefaultAuthenticationTypes.ExternalCookie);
-                ClaimsIdentity oAuthIdentity = await UserManager.CreateIdentityAsync(user,
+                var oAuthIdentity = await UserManager.CreateIdentityAsync(user,
                     OAuthDefaults.AuthenticationType);
-                ClaimsIdentity cookieIdentity = await UserManager.CreateIdentityAsync(user,
+                var cookieIdentity = await UserManager.CreateIdentityAsync(user,
                     CookieAuthenticationDefaults.AuthenticationType);
-                AuthenticationProperties properties = ApplicationOAuthProvider.CreateProperties(user.UserName);
+                var properties = ApplicationOAuthProvider.CreateProperties(user.UserName);
                 Authentication.SignIn(properties, oAuthIdentity, cookieIdentity);
             }
             else
@@ -321,21 +325,92 @@ namespace BookIt.Api.Controllers
                 return BadRequest(ModelState);
             }
 
-            IdentityUser user = new IdentityUser
+            var user = new IdentityUser
+                       {
+                           UserName = model.UserName
+                       };
+            var result = await UserManager.CreateAsync(user, model.Password);
+            
+            if (result.Succeeded)
             {
-                UserName = model.UserName
-            };
-
-            IdentityResult result = await UserManager.CreateAsync(user, model.Password);
-            IHttpActionResult errorResult = GetErrorResult(result);
-
-            if (errorResult != null)
+                await SaveBearerToken(model.UserName, model.Password);
+                await SignInAsync(user, false);
+            }
+            else
             {
-                return errorResult;
+                var errorResult = GetErrorResult(result);
+
+                if (errorResult != null)
+                {
+                    return errorResult;
+                }
             }
 
             return Ok();
         }
+
+        private async Task SaveBearerToken(string username, string password)
+        {
+            var bearerTokenProvider = new BearerTokenProvider();
+            var token = await bearerTokenProvider.GetBearerToken(username, password);
+            if (!string.IsNullOrEmpty(token))
+            {
+                HttpContext.Current.Response.AppendCookie(new HttpCookie("bearerToken", token));
+            }
+        }
+
+        private bool GrantAdminPermissions(IdentityUser user)
+        {
+            IdentityResult ir;
+            var rm = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(new ApplicationDbContext()));
+            ir = rm.Create(new IdentityRole("admin"));
+            var result = UserManager.Create(user, "123456");
+            UserManager.AddToRole(user.Id, "admin");
+
+            return true;
+        }
+
+        private async Task SignInAsync(IdentityUser user, bool isPersistent)
+        {
+            Authentication.SignOut(DefaultAuthenticationTypes.ExternalCookie);
+
+            var identity = await UserManager.CreateIdentityAsync(
+               user, DefaultAuthenticationTypes.ApplicationCookie);
+
+            Authentication.SignIn(
+                new AuthenticationProperties()
+                {
+                    IsPersistent = isPersistent
+                }, identity);
+        }
+
+        //
+        // POST: /Account/Login
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("Login")]
+        public async Task<IHttpActionResult> Login(LoginViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await UserManager.FindAsync(model.UserName, model.Password);
+                if (user != null)
+                {
+                    await SaveBearerToken(model.UserName, model.Password);
+                    await SignInAsync(user, model.RememberMe);
+                    return Ok();
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Invalid username or password.");
+                }
+            }
+
+            // If we got this far, something failed, redisplay form
+            return Ok();
+        }
+
+        
 
         // POST api/Account/RegisterExternal
         [OverrideAuthentication]

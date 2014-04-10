@@ -1,11 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.Web.Http;
 
+using BookIt.Business.Abstract;
+
 namespace BookIt.Api2.Controllers
 {
-    [Authorize]
+    //[Authorize]
     public class ValuesController : ApiController
     {
+        public ValuesController(IWaitingListRepository w)
+        {
+        }
+
         // GET api/values
         public IEnumerable<string> Get()
         {

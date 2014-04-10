@@ -75,8 +75,8 @@
 
         function refreshList () {
             $('#waitlist').html('');
-
-            $.ajax(uri, {
+            var apiWlGet = 'api/waitinglist/GetWaitingList';
+            $.ajax(apiWlGet, {
                 dataType: 'json',
                 method: 'get',
                 headers: getAuthHeaders(),

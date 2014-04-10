@@ -16,8 +16,9 @@ namespace BookIt.Api2
     {
         protected void Application_Start()
         {
-            AreaRegistration.RegisterAllAreas();
             GlobalConfiguration.Configure(WebApiConfig.Register);
+
+            AreaRegistration.RegisterAllAreas();
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
@@ -25,19 +26,7 @@ namespace BookIt.Api2
 
         public static void RegisterAutofacStuff(HttpConfiguration config)
         {
-            var builder = new ContainerBuilder();
-            builder.RegisterModule<RepositoriesRegistrationModule>();
-            builder.RegisterModule<ApiRegistrationModule>();
-            builder.RegisterAssemblyTypes(
-                Assembly.GetExecutingAssembly())
-                .Where(t =>
-                       !t.IsAbstract && typeof(ApiController).IsAssignableFrom(t))
-                .InstancePerWebApiRequest();
-
-            var container = builder.Build();
-
-            var resolver = new AutofacWebApiDependencyResolver(container);
-            config.DependencyResolver = resolver;
+            
         }
 
     }

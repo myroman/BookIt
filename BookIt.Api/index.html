@@ -14,55 +14,174 @@
     <p id="message"></p>
   </div>
   
-  <div>
-    <h2>Waiting list</h2>
-    <ul id="waitlist" />
-  </div>
+    <div>
+        <h2>Waiting list</h2>
+        <ul id="waitlist" />
+    </div>
+    
+    <div class="register">
+        <h2>You can register here...</h2>
+        Your login: <input type='text' id='txtUserName'/>
+        Pwd: <input type='text' id='txtPwd' />
+        
+        <input type='button' id='btnRegister' value='Register'/>
+        <input type="button" id='btnLogin' value='Login'/>
+        <input type="button" id='btnLogout' value='Logout' />
 
-  <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min.js"></script>
+        <span class='msg'></span>
+    </div>
+
+    <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min.js"></script>
   <script>
-    var uri = 'api/waitlist';
+    var uri = 'api/values';
 
-    $(document).ready(function () {
-      function refreshList() {
-        $('#waitlist').html('');
-        $.getJSON(uri)
-          .done(function (data) {
-            $.each(data, function (key, item) {
-              if (item != null) {
-                $('<li>', {
-                  text: formatItem(item)
-                }).appendTo($('#waitlist'));
-              }
-            });
-          });
-      }
+    function createCookie(name, value, days) {
+        var expires;
 
-      refreshList();
-      
-      function formatItem(item) {
-        return item.User.FullName + ' booked ' + item.HubResource.Name + ' at ' + item.BookedTime;
-      }
+        if (days) {
+            var date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            expires = "; expires=" + date.toGMTString();
+        } else {
+            expires = "";
+        }
+        document.cookie = escape(name) + "=" + escape(value) + expires + "; path=/";
+    }
 
-      var addToLine = function () {
-        $.ajax({
-          url: uri + '?resourceId=' + $('#resourceId').val(),
-          dataType: 'json',
-          method: 'POST',
-          data: {
-            Email: 'user1@gmail.com',
-            Password: 'qwerty'
-          },
-          success: function(data) {
-            if (data != null) {
-              $('#message').text(formatItem(data));
-              refreshList();
+    function readCookie(name) {
+        var nameEQ = escape(name) + "=";
+        var ca = document.cookie.split(';');
+        for (var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+            if (c.indexOf(nameEQ) === 0) return unescape(c.substring(nameEQ.length, c.length));
+        }
+        return null;
+    }
+
+    function eraseCookie(name) {
+        createCookie(name, "", -1);
+    }
+
+    $(document).ready(function() {
+
+        function getAuthHeaders() {
+            var headers = {};
+            if (readCookie("bearerToken") != null) {
+                headers.Authorization = "Bearer " + readCookie("bearerToken");
             }
-          }
-        });
-      };
+            return headers;
+        }
 
-      $('#addUserToLine').click(addToLine);
+        function refreshList () {
+            $('#waitlist').html('');
+            var apiWlGet = 'api/Waitlist/GetWaitingList';
+            $.ajax(apiWlGet, {
+                dataType: 'json',
+                method: 'get',
+                headers: getAuthHeaders(),
+                success:function(data) {
+                    $.each(data, function (key, item) {
+                        if (item != null) {
+                            $('<li>', {
+                                text: formatItem(item)
+                            }).appendTo($('#waitlist'));
+                        }
+                    });
+                },
+                error: function(data) {
+                    if (data.status == '401') {
+                        $('#waitlist').text('No access');
+                    }
+                }
+            });
+        }
+
+        refreshList();
+
+        function formatItem (item) {
+            return item;
+            //return item.User.FullName + ' booked ' + item.HubResource.Name + ' at ' + item.BookedTime;
+        }
+
+        var register = function() {
+            $.ajax({
+                url: 'api/Account/Register',
+                dataType: 'json',
+                method: 'POST',
+                data: {
+                    UserName: $('.register #txtUserName').val(),
+                    Password: $('.register #txtPwd').val(),
+                    ConfirmPassword: $('.register #txtPwd').val()
+                },
+                success: function(data) {
+                    if (data != null) {
+                        console.log(data);
+                        $('.register .msg').text(function(d) {
+                            return d;
+                        }(data));
+                        refreshList();
+                    }
+                },
+                error: function(answer) {
+                    console.log(answer);
+                    $('.register .msg').text(answer.responseText);
+                }
+            });
+        };
+
+        var login = function() {
+            $.ajax({
+                url: 'api/account/login',
+                method: 'POST',
+                data: {
+                    UserName: $('.register #txtUserName').val(),
+                    Password: $('.register #txtPwd').val(),
+                    RememberMe: true
+                },
+                success: function(data) {
+                    if (data != null) {
+                        console.log(data);
+                        $('.register .msg').text(function(d) {
+                            return d.statusText;
+                        }(data));
+
+                        window.location = window.location;
+                        //refreshList();
+                    }
+                },
+                error: function (answer) {
+                    console.log(answer);
+                    $('.register .msg').text(answer.responseText);
+                }
+            });
+        };
+
+        var logout = function() {
+            $.ajax({
+                url: 'api/Account/Logout',
+                method: 'POST',
+                headers: getAuthHeaders(),
+                success: function (data) {
+                    if (data != null) {
+                        console.log(data);
+                        $('.register .msg').text(function (d) {
+                            return d.statusText;
+                        }(data));
+                        
+                        refreshList();
+                    }
+                },
+                error: function (answer) {
+                    console.log(answer);
+                    $('.register .msg').text(answer.responseText);
+                }
+            });
+        };
+
+        $('.register #btnRegister').click(register);
+        $('.register #btnLogin').click(login);
+        $('.register #btnLogout').click(logout);
     });
   </script>
 </body>

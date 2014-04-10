@@ -1,38 +1,23 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Web;
 using System.Web.Http;
-
-using Autofac;
-using Autofac.Integration.WebApi;
-
-using BookIt.Api.App_Start;
-using BookIt.Business.RepositoriesImpl;
+using System.Web.Mvc;
+using System.Web.Optimization;
+using System.Web.Routing;
 
 namespace BookIt.Api
 {
-    public class WebApiApplication : HttpApplication
+    public class WebApiApplication : System.Web.HttpApplication
     {
         protected void Application_Start()
         {
-            GlobalConfiguration.Configure(WebApiConfig.RegisterRoutes);
-            GlobalConfiguration.Configure(RegisterAutofacStuff);
-        }
-
-        public static void RegisterAutofacStuff(HttpConfiguration config)
-        {
-            var builder = new ContainerBuilder();
-            builder.RegisterModule<RepositoriesRegistrationModule>();
-            builder.RegisterModule<ApiRegistrationModule>();
-            builder.RegisterAssemblyTypes(
-                Assembly.GetExecutingAssembly())
-                .Where(t =>
-                       !t.IsAbstract && typeof(ApiController).IsAssignableFrom(t))
-                .InstancePerWebApiRequest();
-
-            var container = builder.Build();
-
-            var resolver = new AutofacWebApiDependencyResolver(container);
-            config.DependencyResolver = resolver;
+            AreaRegistration.RegisterAllAreas();
+            GlobalConfiguration.Configure(WebApiConfig.Register);
+            FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
+            RouteConfig.RegisterRoutes(RouteTable.Routes);
+            BundleConfig.RegisterBundles(BundleTable.Bundles);
         }
     }
 }

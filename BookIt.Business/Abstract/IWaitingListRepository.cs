@@ -8,6 +8,6 @@ namespace BookIt.Business.Abstract
     {
         IEnumerable<WaitingListEntry> GetQueuedUsers();
 
-        WaitingListEntry AppendUserToList(User user, int resourceId);
+        WaitingListEntry AppendUserToList(ApplicationUser user, int resourceId);
     }
 }

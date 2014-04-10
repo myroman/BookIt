@@ -1,10 +1,14 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Web.Http;
 
 using BookIt.Api2.ViewModels;
 using BookIt.Business.Abstract;
 using BookIt.Business.Models;
+
+using Microsoft.AspNet.Identity;
 
 namespace BookIt.Api2.Controllers
 {
@@ -15,26 +19,34 @@ namespace BookIt.Api2.Controllers
 
         private readonly WaitinglistHelper waitinglistHelper;
 
-        public WaitlistController(IWaitingListRepository waitingListRepository, WaitinglistHelper waitinglistHelper)
+        private readonly IUserRepository userRepository;
+
+        public WaitlistController(
+            IWaitingListRepository waitingListRepository, 
+            WaitinglistHelper waitinglistHelper,
+            IUserRepository userRepository)
         {
             this.waitingListRepository = waitingListRepository;
             this.waitinglistHelper = waitinglistHelper;
+            this.userRepository = userRepository;
         }
 
-        public IEnumerable<WaitingListEntryViewModel> GetWaitingList()
+        public IEnumerable<Task<WaitingListEntryViewModel>> GetWaitingList()
         {
             return waitingListRepository.GetQueuedUsers().Select(x => waitinglistHelper.CreateViewModel(x));
         }
 
         [HttpPost]
-        public WaitingListEntryViewModel AddToList(User user, int resourceId)
+        public async Task<WaitingListEntryViewModel> AddToList(int resourceId)
         {
+            var user = await userRepository.FindCurrentUser();
+
             var entry = waitingListRepository.AppendUserToList(user, resourceId);
             if (entry == null)
             {
                 return null;
             }
-            var infoAboutNewPosition = waitinglistHelper.CreateViewModel(entry);
+            var infoAboutNewPosition = await waitinglistHelper.CreateViewModel(entry);
             return infoAboutNewPosition;
         }
     }

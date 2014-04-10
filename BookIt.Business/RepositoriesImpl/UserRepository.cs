@@ -1,59 +1,75 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 using BookIt.Business.Abstract;
 using BookIt.Business.Models;
+
+using Microsoft.AspNet.Identity;
 
 namespace BookIt.Business.RepositoriesImpl
 {
     public class UserRepository : IUserRepository
     {
-        private List<User> users = new List<User>
+        public UserManager<ApplicationUser> UserManager { get; set; }
+
+        private List<ApplicationUser> users = new List<ApplicationUser>
             {
-                new User
+                new ApplicationUser
                     {
                         Email = "user1@gmail.com",
                         FullName = "John",
-                        Id = 1,
                         Password = "qwerty"
                     },
-                new User
+                new ApplicationUser
                     {
                         Email = "user2@gmail.com",
                         FullName = "Mary",
-                        Id = 2,
                         Password = "123456"
                     }
             };
 
-        public IEnumerable<User> GetList()
+        public UserRepository(UserManager<ApplicationUser> userManager)
+        {
+            UserManager = userManager;
+        }
+
+        public IEnumerable<ApplicationUser> GetList()
         {
             return users;
         }
 
-        public User Read(int id)
+        public ApplicationUser Read(int id)
         {
-            return users.SingleOrDefault(x => x.Id == id);
+            return null;
         }
 
-        public void Add(User entity)
+        public void Add(ApplicationUser entity)
         {
             throw new System.NotImplementedException();
         }
 
-        public void Update(User entity)
+        public void Update(ApplicationUser entity)
         {
             throw new System.NotImplementedException();
         }
 
-        public void Remove(User entity)
+        public void Remove(ApplicationUser entity)
         {
             throw new System.NotImplementedException();
         }
 
-        public User FindUserByCredentials(User user)
+        public async Task<ApplicationUser> FindCurrentUser()
         {
-            return users.SingleOrDefault(x => x.Email == user.Email && x.Password == user.Password);
+            var id = Thread.CurrentPrincipal.Identity.GetUserId();
+
+            return await Read(id);
+        }
+
+        public async Task<ApplicationUser> Read(string id)
+        {
+            var foundUser = await UserManager.FindByIdAsync(id);
+            return foundUser;
         }
     }
 }

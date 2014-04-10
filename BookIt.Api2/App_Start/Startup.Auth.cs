@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using BookIt.Api2.Models;
+using BookIt.Business.Models;
 
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
@@ -20,7 +21,7 @@ namespace BookIt.Api2
         {
             PublicClientId = "self";
 
-            UserManagerFactory = () => new UserManager<IdentityUser>(new UserStore<IdentityUser>());
+            UserManagerFactory = () => new UserManager<ApplicationUser>(new UserStore<ApplicationUser>());
 
             OAuthOptions = new OAuthAuthorizationServerOptions
             {
@@ -34,15 +35,15 @@ namespace BookIt.Api2
 
         public static OAuthAuthorizationServerOptions OAuthOptions { get; private set; }
 
-        public static Func<UserManager<IdentityUser>> UserManagerFactory { get; set; }
+        public static Func<UserManager<ApplicationUser>> UserManagerFactory { get; set; }
 
         public static string PublicClientId { get; private set; }
 
         // For more information on configuring authentication, please visit http://go.microsoft.com/fwlink/?LinkId=301864
         public void ConfigureAuth(IAppBuilder app)
         {
-            // Enable the application to use a cookie to store information for the signed in user
-            // and to use a cookie to temporarily store information about a user logging in with a third party login provider
+            // Enable the application to use a cookie to store information for the signed in ApplicationUser
+            // and to use a cookie to temporarily store information about a ApplicationUser logging in with a third party login provider
             app.UseCookieAuthentication(
                 new CookieAuthenticationOptions
                 {

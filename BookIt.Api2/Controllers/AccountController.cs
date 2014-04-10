@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 
+using BookIt.Business.Models;
+
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Owin.Security;
@@ -29,14 +31,14 @@ namespace BookIt.Api2.Controllers
         {
         }
 
-        public AccountController(UserManager<IdentityUser> userManager,
+        public AccountController(UserManager<ApplicationUser> userManager,
             ISecureDataFormat<AuthenticationTicket> accessTokenFormat)
         {
             UserManager = userManager;
             AccessTokenFormat = accessTokenFormat;
         }
 
-        public UserManager<IdentityUser> UserManager { get; private set; }
+        public UserManager<ApplicationUser> UserManager { get; private set; }
         public ISecureDataFormat<AuthenticationTicket> AccessTokenFormat { get; private set; }
 
         // GET api/Account/UserInfo
@@ -249,7 +251,7 @@ namespace BookIt.Api2.Controllers
                 return new ChallengeResult(provider, this);
             }
 
-            IdentityUser user = await UserManager.FindAsync(new UserLoginInfo(externalLogin.LoginProvider,
+            var user = await UserManager.FindAsync(new UserLoginInfo(externalLogin.LoginProvider,
                 externalLogin.ProviderKey));
 
             bool hasRegistered = user != null;
@@ -325,7 +327,7 @@ namespace BookIt.Api2.Controllers
                 return BadRequest(ModelState);
             }
 
-            var user = new IdentityUser
+            var user = new ApplicationUser
                        {
                            UserName = model.UserName
                        };
@@ -359,7 +361,7 @@ namespace BookIt.Api2.Controllers
             }
         }
 
-        private bool GrantAdminPermissions(IdentityUser user)
+        private bool GrantAdminPermissions(ApplicationUser user)
         {
             IdentityResult ir;
             var rm = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(new ApplicationDbContext()));
@@ -370,7 +372,7 @@ namespace BookIt.Api2.Controllers
             return true;
         }
 
-        private async Task SignInAsync(IdentityUser user, bool isPersistent)
+        private async Task SignInAsync(ApplicationUser user, bool isPersistent)
         {
             Authentication.SignOut(DefaultAuthenticationTypes.ExternalCookie);
 
@@ -430,7 +432,7 @@ namespace BookIt.Api2.Controllers
                 return InternalServerError();
             }
 
-            IdentityUser user = new IdentityUser
+            var user = new ApplicationUser
             {
                 UserName = model.UserName
             };

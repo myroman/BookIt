@@ -6,7 +6,7 @@ namespace BookIt.Api2.ViewModels
     {
         public int PositionInList { get; set; }
 
-        public User User { get; set; }
+        public ApplicationUser User { get; set; }
 
         public HubResource HubResource { get; set; }
 

@@ -44,7 +44,7 @@ namespace BookIt.Api2.Models
     public class RegisterBindingModel
     {
         [Required]
-        [Display(Name = "User name")]
+        [Display(Name = "ApplicationUser name")]
         public string UserName { get; set; }
 
         [Required]
@@ -62,7 +62,7 @@ namespace BookIt.Api2.Models
     public class RegisterExternalBindingModel
     {
         [Required]
-        [Display(Name = "User name")]
+        [Display(Name = "ApplicationUser name")]
         public string UserName { get; set; }
     }
 

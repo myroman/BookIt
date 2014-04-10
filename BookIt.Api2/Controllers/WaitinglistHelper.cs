@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Threading.Tasks;
 
 using BookIt.Api2.ViewModels;
 using BookIt.Business.Abstract;
@@ -21,12 +22,13 @@ namespace BookIt.Api2.Controllers
             this.waitingListRepository = waitingListRepository;
         }
 
-        public WaitingListEntryViewModel CreateViewModel(WaitingListEntry model)
+        public async Task<WaitingListEntryViewModel> CreateViewModel(WaitingListEntry model)
         {
+            var user = await userRepository.Read(model.UserId);
             return new WaitingListEntryViewModel
                 {
                     HubResource = hubResourceRepository.Read(model.ResourceId),
-                    User = userRepository.Read(model.UserId),
+                    User = user,
                     PositionInList = waitingListRepository.GetQueuedUsers().ToList().IndexOf(model) + 1,
                     BookedTime = model.TimeOfApply.ToString()
                 };

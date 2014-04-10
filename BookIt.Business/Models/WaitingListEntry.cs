@@ -4,7 +4,7 @@ namespace BookIt.Business.Models
 {
     public class WaitingListEntry
     {
-        public int UserId { get; set; }
+        public string UserId { get; set; }
 
         public int ResourceId { get; set; }
 

@@ -26,20 +26,15 @@ namespace BookIt.Business.RepositoriesImpl
             return waitingList.OrderBy(x => x.TimeOfApply);
         }
 
-        public WaitingListEntry AppendUserToList(User user, int resourceId)
+        public WaitingListEntry AppendUserToList(ApplicationUser user, int resourceId)
         {
-            var foundUser = userRepository.FindUserByCredentials(user);
-            if (foundUser == null)
-            {
-                return null;
-            }
-            var userId = foundUser.Id;
+            var userId = user.Id;
             if (IfAlreadyRegistered(userId, resourceId))
             {
                 return null;
             }
 
-            if (userRepository.Read(userId) != null && hubResourceRepository.Read(resourceId) != null)
+            if (hubResourceRepository.Read(resourceId) != null)
             {
                 var newItem = new WaitingListEntry
                     {
@@ -53,7 +48,7 @@ namespace BookIt.Business.RepositoriesImpl
             return null;
         }
 
-        private bool IfAlreadyRegistered(int userId, int resourceId)
+        private bool IfAlreadyRegistered(string userId, int resourceId)
         {
             return GetQueuedUsers().Any(x => x.UserId == userId && x.ResourceId == resourceId);
         }

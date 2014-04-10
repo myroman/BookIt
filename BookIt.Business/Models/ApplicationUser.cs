@@ -4,8 +4,8 @@ namespace BookIt.Business.Models
 {
     public class ApplicationUser : IdentityUser
     {
-        public string Password { get; set; }
+        //public string Password { get; set; }
 
-        public string FullName { get; set; }
+        //public string FullName { get; set; }
     }
 }

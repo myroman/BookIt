@@ -15,11 +15,11 @@ namespace BookIt.Api.Controllers
 
         private readonly IWaitingListRepository waitingListRepository;
 
-        public WaitinglistHelper(IHubResourceRepository hubResourceRepository, IUserRepository userRepository, IWaitingListRepository waitingListRepository)
+        public WaitinglistHelper(IHubResourceRepository hubResourceRepository, IWaitingListRepository waitingListRepository, IUserRepository userRepository)
         {
             this.hubResourceRepository = hubResourceRepository;
-            this.userRepository = userRepository;
             this.waitingListRepository = waitingListRepository;
+            this.userRepository = userRepository;
         }
 
         public async Task<WaitingListEntryViewModel> CreateViewModel(WaitingListEntry model)

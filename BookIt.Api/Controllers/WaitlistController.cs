@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
 
+using BookIt.Api.Models;
 using BookIt.Api.ViewModels;
 using BookIt.Business.Abstract;
 using BookIt.Business.Models;
@@ -16,10 +17,13 @@ namespace BookIt.Api.Controllers
 
         private readonly WaitinglistHelper waitinglistHelper;
 
-        public WaitlistController(IWaitingListRepository waitingListRepository, WaitinglistHelper waitinglistHelper)
+        private readonly IUserRepository userRepository;
+
+        public WaitlistController(IWaitingListRepository waitingListRepository, WaitinglistHelper waitinglistHelper, IUserRepository userRepository)
         {
             this.waitingListRepository = waitingListRepository;
             this.waitinglistHelper = waitinglistHelper;
+            this.userRepository = userRepository;
         }
 
         public IEnumerable<Task<WaitingListEntryViewModel>> GetWaitingList()
@@ -30,7 +34,7 @@ namespace BookIt.Api.Controllers
         [HttpPost]
         public async Task<WaitingListEntryViewModel> AddToList(int resourceId)
         {
-            var user = new ApplicationUser();
+            var user = await userRepository.FindCurrentUser();
             var entry = waitingListRepository.AppendUserToList(user, resourceId);
             if (entry == null)
             {

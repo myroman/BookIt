@@ -8,8 +8,13 @@ using System.Web.Http;
 using Autofac;
 using Autofac.Integration.WebApi;
 
+using BookIt.Api.Models;
+using BookIt.Api.Providers;
+using BookIt.Business.Models;
 using BookIt.Business.RepositoriesImpl;
 
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Owin.Security.OAuth;
 using Newtonsoft.Json.Serialization;
 
@@ -34,7 +39,12 @@ namespace BookIt.Api
             );
 
             var builder = new ContainerBuilder();
-            builder.RegisterType<Class1>();
+            builder.Register(c =>
+            {
+                var userStore = new UserStore<ApplicationUser>(new ApplicationDbContext());
+                var x = new UserManager<ApplicationUser>(userStore);
+                return x;
+            });
             builder.RegisterModule<RepositoriesRegistrationModule>();
             builder.RegisterModule<ApiRegistrationModule>();
             //builder.RegisterApiControllers();

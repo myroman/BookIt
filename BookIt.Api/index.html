@@ -100,8 +100,7 @@
         refreshList();
 
         function formatItem (item) {
-            return item;
-            //return item.User.FullName + ' booked ' + item.HubResource.Name + ' at ' + item.BookedTime;
+            return item.User.UserName + ' booked ' + item.HubResource.Name + ' at ' + item.BookedTime;
         }
 
         var register = function() {
@@ -146,8 +145,8 @@
                             return d.statusText;
                         }(data));
 
-                        window.location = window.location;
-                        //refreshList();
+                        //window.location = window.location;
+                        refreshList();
                     }
                 },
                 error: function (answer) {
@@ -179,9 +178,30 @@
             });
         };
 
+        var addMeToLine = function(resId) {
+            $.ajax('api/waitlist/addtolist?resourceId='+resId, {
+                dataType: 'json',
+                method: 'post',
+                headers: getAuthHeaders(),
+                success: function (item) {
+                    $('<li>', {
+                        text: formatItem(item)
+                    }).appendTo($('#waitlist'));
+                },
+                error: function (data) {
+                    if (data.status == '401') {
+                        $('#waitlist').text('No access');
+                    }
+                }
+            });
+        };
+
         $('.register #btnRegister').click(register);
         $('.register #btnLogin').click(login);
         $('.register #btnLogout').click(logout);
+        $('#addUserToLine').click(function() {
+            addMeToLine($('#resourceId').val());
+        });
     });
   </script>
 </body>

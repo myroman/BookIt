@@ -18,20 +18,16 @@ namespace BookIt.Business.RepositoriesImpl
                 new ApplicationUser
                     {
                         Email = "user1@gmail.com",
-                        FullName = "John",
-                        Password = "qwerty"
+                        //FullName = "John",
+                        //Password = "qwerty"
                     },
                 new ApplicationUser
                     {
                         Email = "user2@gmail.com",
-                        FullName = "Mary",
-                        Password = "123456"
+                        //FullName = "Mary",
+                        //Password = "123456"
                     }
             };
-
-        public UserRepository()
-        {
-        }
 
         public UserRepository(UserManager<ApplicationUser> userManager)
         {

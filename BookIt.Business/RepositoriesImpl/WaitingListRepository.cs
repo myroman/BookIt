@@ -13,10 +13,10 @@ namespace BookIt.Business.RepositoriesImpl
 
         private readonly IHubResourceRepository hubResourceRepository;
 
-        public WaitingListRepository(IUserRepository userRepository, IHubResourceRepository hubResourceRepository)
+        public WaitingListRepository(IHubResourceRepository hubResourceRepository, IUserRepository userRepository)
         {
-            this.userRepository = userRepository;
             this.hubResourceRepository = hubResourceRepository;
+            this.userRepository = userRepository;
         }
 
         private List<WaitingListEntry> waitingList = new List<WaitingListEntry>();

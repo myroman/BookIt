@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web.Http;
 
 using BookIt.Api.ViewModels;
@@ -21,20 +22,21 @@ namespace BookIt.Api.Controllers
             this.waitinglistHelper = waitinglistHelper;
         }
 
-        public IEnumerable<WaitingListEntryViewModel> GetWaitingList()
+        public IEnumerable<Task<WaitingListEntryViewModel>> GetWaitingList()
         {
             return waitingListRepository.GetQueuedUsers().Select(x => waitinglistHelper.CreateViewModel(x));
         }
 
         [HttpPost]
-        public WaitingListEntryViewModel AddToList(User user, int resourceId)
+        public async Task<WaitingListEntryViewModel> AddToList(int resourceId)
         {
+            var user = new ApplicationUser();
             var entry = waitingListRepository.AppendUserToList(user, resourceId);
             if (entry == null)
             {
                 return null;
             }
-            var infoAboutNewPosition = waitinglistHelper.CreateViewModel(entry);
+            var infoAboutNewPosition = await waitinglistHelper.CreateViewModel(entry);
             return infoAboutNewPosition;
         }
     }

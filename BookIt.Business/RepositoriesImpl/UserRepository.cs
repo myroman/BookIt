@@ -29,6 +29,10 @@ namespace BookIt.Business.RepositoriesImpl
                     }
             };
 
+        public UserRepository()
+        {
+        }
+
         public UserRepository(UserManager<ApplicationUser> userManager)
         {
             UserManager = userManager;

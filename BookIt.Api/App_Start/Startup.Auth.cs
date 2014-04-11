@@ -21,17 +21,19 @@ namespace BookIt.Api
             PublicClientId = "self";
 
             //UserManagerFactory = () => new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(new ApplicationDbContext()));
-            var s = GlobalConfiguration.Configuration.DependencyResolver.BeginScope();
-            var UserManagerFactory = s.GetService(typeof(Func<UserManager<ApplicationUser>>)) as Func<UserManager<ApplicationUser>>;
-            
-            OAuthOptions = new OAuthAuthorizationServerOptions
+            using (var s = GlobalConfiguration.Configuration.DependencyResolver.BeginScope())
             {
-                TokenEndpointPath = new PathString("/Token"),
-                Provider = new ApplicationOAuthProvider(PublicClientId, UserManagerFactory),
-                AuthorizeEndpointPath = new PathString("/api/Account/ExternalLogin"),
-                AccessTokenExpireTimeSpan = TimeSpan.FromDays(14),
-                AllowInsecureHttp = true
-            };
+                var userManagerFactory = s.GetService(typeof(Func<UserManager<ApplicationUser>>)) as Func<UserManager<ApplicationUser>>;
+
+                OAuthOptions = new OAuthAuthorizationServerOptions
+                               {
+                                   TokenEndpointPath = new PathString("/Token"),
+                                   Provider = new ApplicationOAuthProvider(PublicClientId),
+                                   AuthorizeEndpointPath = new PathString("/api/Account/ExternalLogin"),
+                                   AccessTokenExpireTimeSpan = TimeSpan.FromDays(14),
+                                   AllowInsecureHttp = true
+                               };
+            }
         }
 
         public static OAuthAuthorizationServerOptions OAuthOptions { get; private set; }

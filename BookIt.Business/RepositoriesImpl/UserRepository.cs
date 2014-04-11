@@ -6,6 +6,7 @@ using BookIt.Business.Abstract;
 using BookIt.Business.Models;
 
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace BookIt.Business.RepositoriesImpl
 {

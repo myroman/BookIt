@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Security.Claims;
 using System.Threading.Tasks;
+using System.Web.Http;
 
 using BookIt.Business.Models;
 
@@ -15,44 +15,42 @@ namespace BookIt.Api.Providers
     public class ApplicationOAuthProvider : OAuthAuthorizationServerProvider
     {
         private readonly string _publicClientId;
-        private readonly Func<UserManager<ApplicationUser>> _userManagerFactory;
 
-        public ApplicationOAuthProvider(string publicClientId, Func<UserManager<ApplicationUser>> userManagerFactory)
+        public ApplicationOAuthProvider(string publicClientId)
         {
             if (publicClientId == null)
             {
                 throw new ArgumentNullException("publicClientId");
             }
 
-            if (userManagerFactory == null)
-            {
-                throw new ArgumentNullException("userManagerFactory");
-            }
-
             _publicClientId = publicClientId;
-            _userManagerFactory = userManagerFactory;
         }
 
         public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
         {
-            using (UserManager<ApplicationUser> userManager = _userManagerFactory())
+            using (var scope = GlobalConfiguration.Configuration.DependencyResolver.BeginScope())
             {
-                var user = await userManager.FindAsync(context.UserName, context.Password);
+                var userManagerFactory = scope.GetService(typeof(Func<UserManager<ApplicationUser>>)) as Func<UserManager<ApplicationUser>>;
 
-                if (user == null)
+                using (var userManager = userManagerFactory())
                 {
-                    context.SetError("invalid_grant", "The user name or password is incorrect.");
-                    return;
-                }
+                    var user = await userManager.FindAsync(context.UserName, context.Password);
 
-                ClaimsIdentity oAuthIdentity = await userManager.CreateIdentityAsync(user,
-                    context.Options.AuthenticationType);
-                ClaimsIdentity cookiesIdentity = await userManager.CreateIdentityAsync(user,
-                    CookieAuthenticationDefaults.AuthenticationType);
-                AuthenticationProperties properties = CreateProperties(user.UserName);
-                AuthenticationTicket ticket = new AuthenticationTicket(oAuthIdentity, properties);
-                context.Validated(ticket);
-                context.Request.Context.Authentication.SignIn(cookiesIdentity);
+                    if (user == null)
+                    {
+                        context.SetError("invalid_grant", "The user name or password is incorrect.");
+                        return;
+                    }
+
+                    var oAuthIdentity = await userManager.CreateIdentityAsync(user,
+                        context.Options.AuthenticationType);
+                    var cookiesIdentity = await userManager.CreateIdentityAsync(user,
+                        CookieAuthenticationDefaults.AuthenticationType);
+                    var properties = CreateProperties(user.UserName);
+                    var ticket = new AuthenticationTicket(oAuthIdentity, properties);
+                    context.Validated(ticket);
+                    context.Request.Context.Authentication.SignIn(cookiesIdentity);
+                }
             }
         }
 

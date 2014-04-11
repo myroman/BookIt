@@ -8,6 +8,7 @@
     <h2>Add user to waiting list</h2>
     <input type="text" id="userId"/>
     <input type="text" id="resourceId"/>
+    <select id="ddlResources"></select>
 
     <input type="button" id="addUserToLine" value="Add" />
     
@@ -64,144 +65,163 @@
     }
 
     $(document).ready(function() {
+      var ddlResources = $('#ddlResources');
 
-        function getAuthHeaders() {
-            var headers = {};
-            if (readCookie("bearerToken") != null) {
-                headers.Authorization = "Bearer " + readCookie("bearerToken");
+      function getAuthHeaders() {
+        var headers = {};
+        if (readCookie("bearerToken") != null) {
+          headers.Authorization = "Bearer " + readCookie("bearerToken");
+        }
+        return headers;
+      }
+
+      function refreshList() {
+        $('#waitlist').html('');
+        var apiWlGet = 'api/Waitlist/GetWaitingList';
+        $.ajax(apiWlGet, {
+          dataType: 'json',
+          method: 'get',
+          headers: getAuthHeaders(),
+          success: function(data) {
+            $.each(data, function(key, item) {
+              if (item != null) {
+                $('<li>', {
+                  text: formatItem(item)
+                }).appendTo($('#waitlist'));
+              }
+            });
+          },
+          error: function(data) {
+            if (data.status == '401') {
+              $('#waitlist').text('No access');
             }
-            return headers;
-        }
-
-        function refreshList () {
-            $('#waitlist').html('');
-            var apiWlGet = 'api/Waitlist/GetWaitingList';
-            $.ajax(apiWlGet, {
-                dataType: 'json',
-                method: 'get',
-                headers: getAuthHeaders(),
-                success:function(data) {
-                    $.each(data, function (key, item) {
-                        if (item != null) {
-                            $('<li>', {
-                                text: formatItem(item)
-                            }).appendTo($('#waitlist'));
-                        }
-                    });
-                },
-                error: function(data) {
-                    if (data.status == '401') {
-                        $('#waitlist').text('No access');
-                    }
-                }
-            });
-        }
-
-        refreshList();
-
-        function formatItem (item) {
-            return item.User.UserName + ' booked ' + item.HubResource.Name + ' at ' + item.BookedTime;
-        }
-
-        var register = function() {
-            $.ajax({
-                url: 'api/Account/Register',
-                dataType: 'json',
-                method: 'POST',
-                data: {
-                    UserName: $('.register #txtUserName').val(),
-                    Password: $('.register #txtPwd').val(),
-                    ConfirmPassword: $('.register #txtPwd').val()
-                },
-                success: function(data) {
-                    if (data != null) {
-                        console.log(data);
-                        $('.register .msg').text(function(d) {
-                            return d;
-                        }(data));
-                        refreshList();
-                    }
-                },
-                error: function(answer) {
-                    console.log(answer);
-                    $('.register .msg').text(answer.responseText);
-                }
-            });
-        };
-
-        var login = function() {
-            $.ajax({
-                url: 'api/account/login',
-                method: 'POST',
-                data: {
-                    UserName: $('.register #txtUserName').val(),
-                    Password: $('.register #txtPwd').val(),
-                    RememberMe: true
-                },
-                success: function(data) {
-                    if (data != null) {
-                        console.log(data);
-                        $('.register .msg').text(function(d) {
-                            return d.statusText;
-                        }(data));
-
-                        //window.location = window.location;
-                        refreshList();
-                    }
-                },
-                error: function (answer) {
-                    console.log(answer);
-                    $('.register .msg').text(answer.responseText);
-                }
-            });
-        };
-
-        var logout = function() {
-            $.ajax({
-                url: 'api/Account/Logout',
-                method: 'POST',
-                headers: getAuthHeaders(),
-                success: function (data) {
-                    if (data != null) {
-                        console.log(data);
-                        $('.register .msg').text(function (d) {
-                            return d.statusText;
-                        }(data));
-                        
-                        refreshList();
-                    }
-                },
-                error: function (answer) {
-                    console.log(answer);
-                    $('.register .msg').text(answer.responseText);
-                }
-            });
-        };
-
-        var addMeToLine = function(resId) {
-            $.ajax('api/waitlist/addtolist?resourceId='+resId, {
-                dataType: 'json',
-                method: 'post',
-                headers: getAuthHeaders(),
-                success: function (item) {
-                    $('<li>', {
-                        text: formatItem(item)
-                    }).appendTo($('#waitlist'));
-                },
-                error: function (data) {
-                    if (data.status == '401') {
-                        $('#waitlist').text('No access');
-                    }
-                }
-            });
-        };
-
-        $('.register #btnRegister').click(register);
-        $('.register #btnLogin').click(login);
-        $('.register #btnLogout').click(logout);
-        $('#addUserToLine').click(function() {
-            addMeToLine($('#resourceId').val());
+          }
         });
+      }
+
+      function formatItem(item) {
+        return item.User.UserName + ' booked ' + item.HubResource.Name + ' at ' + item.BookedTime;
+      }
+
+      var register = function() {
+        $.ajax({
+          url: 'api/Account/Register',
+          dataType: 'json',
+          method: 'POST',
+          data: {
+            UserName: $('.register #txtUserName').val(),
+            Password: $('.register #txtPwd').val(),
+            ConfirmPassword: $('.register #txtPwd').val()
+          },
+          success: function(data) {
+            if (data != null) {
+              console.log(data);
+              $('.register .msg').text(function(d) {
+                return d;
+              }(data));
+              refreshList();
+            }
+          },
+          error: function(answer) {
+            console.log(answer);
+            $('.register .msg').text(answer.responseText);
+          }
+        });
+      };
+
+      var login = function() {
+        $.ajax({
+          url: 'api/account/login',
+          method: 'POST',
+          data: {
+            UserName: $('.register #txtUserName').val(),
+            Password: $('.register #txtPwd').val(),
+            RememberMe: true
+          },
+          success: function(data) {
+            if (data != null) {
+              console.log(data);
+              $('.register .msg').text(function(d) {
+                return d.statusText;
+              }(data));
+
+              //window.location = window.location;
+              refreshList();
+            }
+          },
+          error: function(answer) {
+            console.log(answer);
+            $('.register .msg').text(answer.responseText);
+          }
+        });
+      };
+
+      var logout = function() {
+        $.ajax({
+          url: 'api/Account/Logout',
+          method: 'POST',
+          headers: getAuthHeaders(),
+          success: function(data) {
+            if (data != null) {
+              console.log(data);
+              $('.register .msg').text(function(d) {
+                return d.statusText;
+              }(data));
+
+              refreshList();
+            }
+          },
+          error: function(answer) {
+            console.log(answer);
+            $('.register .msg').text(answer.responseText);
+          }
+        });
+      };
+
+      var addMeToLine = function(resId) {
+        $.ajax('api/waitlist/addtolist?resourceId=' + resId, {
+          dataType: 'json',
+          method: 'post',
+          headers: getAuthHeaders(),
+          success: function(item) {
+            $('<li>', {
+              text: formatItem(item)
+            }).appendTo($('#waitlist'));
+          },
+          error: function(data) {
+            if (data.status == '401') {
+              $('#waitlist').text('No access');
+            }
+          }
+        });
+      };
+
+      var getAllResources = function() {
+        ddlResources.html('');
+        $.ajax('api/resources/all', {
+          method: 'get',
+          dataType: 'json',
+          headers: getAuthHeaders(),
+          success: function(data) {
+            $.each(data, function(key, value) {
+              ddlResources.append($('<option></option>')
+                .attr('value', value.Id)
+                .attr('title', value.Description)
+                .text(value.Name));
+            });
+          }
+        });
+      };
+
+      $('.register #btnRegister').click(register);
+      $('.register #btnLogin').click(login);
+      $('.register #btnLogout').click(logout);
+      $('#addUserToLine').click(function() {
+        addMeToLine(ddlResources.val());
+      });
+
+      refreshList();
+      getAllResources();
     });
   </script>
 </body>

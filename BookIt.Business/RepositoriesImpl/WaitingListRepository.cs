@@ -26,26 +26,31 @@ namespace BookIt.Business.RepositoriesImpl
             return waitingList.OrderBy(x => x.TimeOfApply);
         }
 
-        public WaitingListEntry AppendUserToList(ApplicationUser user, int resourceId)
+        public WaitingListEntry AppendUserToList(ApplicationUser user, HubResource resource)
         {
+            if (user == null)
+            {
+                throw new ArgumentNullException("user");
+            }
+
+            if (resource == null)
+            {
+                throw new ArgumentNullException("resource");
+            }
             var userId = user.Id;
-            if (IfAlreadyRegistered(userId, resourceId))
+            if (IfAlreadyRegistered(userId, resource.Id))
             {
                 return null;
             }
 
-            if (hubResourceRepository.Read(resourceId) != null)
+            var newItem = new WaitingListEntry
             {
-                var newItem = new WaitingListEntry
-                    {
-                        UserId = userId,
-                        ResourceId = resourceId,
-                        TimeOfApply = DateTime.Now
-                    };
-                waitingList.Add(newItem);
-                return newItem;
-            }
-            return null;
+                UserId = userId,
+                ResourceId = resource.Id,
+                TimeOfApply = DateTime.Now
+            };
+            waitingList.Add(newItem);
+            return newItem;
         }
 
         private bool IfAlreadyRegistered(string userId, int resourceId)

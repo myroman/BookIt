@@ -20,11 +20,14 @@ namespace BookIt.Api.Controllers
 
         private readonly IUserRepository userRepository;
 
-        public WaitlistController(IWaitingListRepository waitingListRepository, WaitinglistHelper waitinglistHelper, IUserRepository userRepository)
+        private readonly IHubResourceRepository hubResourceRepository;
+
+        public WaitlistController(IWaitingListRepository waitingListRepository, WaitinglistHelper waitinglistHelper, IUserRepository userRepository, IHubResourceRepository hubResourceRepository)
         {
             this.waitingListRepository = waitingListRepository;
             this.waitinglistHelper = waitinglistHelper;
             this.userRepository = userRepository;
+            this.hubResourceRepository = hubResourceRepository;
         }
 
         [AllowAnonymous]
@@ -46,16 +49,27 @@ namespace BookIt.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<WaitingListEntryViewModel> AddToList(int resourceId)
+        public async Task<ApiResult<WaitingListEntryViewModel>> AddToList(int resourceId)
         {
             var user = await userRepository.FindCurrentUser();
-            var entry = waitingListRepository.AppendUserToList(user, resourceId);
+            if (user == null)
+            {
+                return new ApiResult<WaitingListEntryViewModel>("There's no user with such ID");
+            }
+            var res = hubResourceRepository.Read(resourceId);
+            if (res == null)
+            {
+                return new ApiResult<WaitingListEntryViewModel>("Wrong resource ID");
+            }
+
+            var entry = waitingListRepository.AppendUserToList(user, res);
             if (entry == null)
             {
-                return null;
+                var errorMsg = string.Format("User {0} has already been added to resource {1}", user.UserName, resourceId);
+                return new ApiResult<WaitingListEntryViewModel>(errorMsg);
             }
             var infoAboutNewPosition = await waitinglistHelper.CreateViewModel(entry);
-            return infoAboutNewPosition;
+            return new ApiResult<WaitingListEntryViewModel>(infoAboutNewPosition);
         }
     }
 }

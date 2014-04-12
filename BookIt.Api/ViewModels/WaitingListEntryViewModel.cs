@@ -1,4 +1,3 @@
-using BookIt.Api.Models;
 using BookIt.Business.Models;
 
 namespace BookIt.Api.ViewModels

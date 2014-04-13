@@ -1,12 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
-using System.Threading.Tasks;
 
 using BookIt.Business.Abstract;
 using BookIt.Business.Models;
 
 using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace BookIt.Business.RepositoriesImpl
 {
@@ -60,16 +58,16 @@ namespace BookIt.Business.RepositoriesImpl
             throw new System.NotImplementedException();
         }
 
-        public async Task<ApplicationUser> FindCurrentUser()
+        public ApplicationUser FindCurrentUser()
         {
             var id = Thread.CurrentPrincipal.Identity.GetUserId();
 
-            return await Read(id);
+            return Read(id);
         }
 
-        public async Task<ApplicationUser> Read(string id)
+        public ApplicationUser Read(string id)
         {
-            var foundUser = await UserManager.FindByIdAsync(id);
+            var foundUser = UserManager.FindById(id);
             return foundUser;
         }
     }

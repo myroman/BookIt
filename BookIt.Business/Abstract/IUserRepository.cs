@@ -1,13 +1,11 @@
-﻿using System.Threading.Tasks;
-
-using BookIt.Business.Models;
+﻿using BookIt.Business.Models;
 
 namespace BookIt.Business.Abstract
 {
     public interface IUserRepository : IRepository<ApplicationUser>
     {
-        Task<ApplicationUser> FindCurrentUser();
+        ApplicationUser FindCurrentUser();
 
-        Task<ApplicationUser> Read(string id);
+        ApplicationUser Read(string id);
     }
 }

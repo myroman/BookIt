@@ -58,7 +58,7 @@ BI.Booking  = function() {
           return;
         }
         $('<li>', {
-          text: formatUserBooked(item)
+          text: formatUserBooked(item.Value)
         }).appendTo(waitList);
       },
       error: function (data) {
